@@ -1,0 +1,8 @@
+Welcome to the game.
+You are stranded, alone, in a gated park during an apocalypse.
+The gate underground to escape is electronically operated, but all power was lost in the city during The Event.
+Your only hope is the backup generators scattered across the park.
+Find, and activate, 4 of the 6 generators. The gate will then open.
+Good luck, survivor.
+ 
+Press RETURN to begin.
