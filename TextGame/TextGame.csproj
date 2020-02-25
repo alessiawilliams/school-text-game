@@ -39,9 +39,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="game\GameInstance.cs" />
+    <Compile Include="game\map\IMapSection.cs" />
     <Compile Include="game\map\Item.cs" />
     <Compile Include="game\map\Map.cs" />
-    <Compile Include="game\map\MapSection.cs" />
     <Compile Include="game\map\section_types\Hatch.cs" />
     <Compile Include="game\map\section_types\Generator.cs" />
     <Compile Include="game\map\section_types\Grassland.cs" />

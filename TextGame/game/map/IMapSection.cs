@@ -1,7 +1,5 @@
-﻿namespace TextGame
-{
-    public interface MapSection
-    {
+﻿namespace TextGame.game.map {
+    public interface IMapSection {
         // MapSection will be of type Path, Grassland, Generator, Gate, Tree.
         // Each section can contain a random item, like a map, which gives access to the map.
         // this could include a flashlight, allowing the player to see 2 squares in each direction instead of 1.

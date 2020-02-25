@@ -1,60 +1,51 @@
 ﻿using System;
-using TextGame.section_types;
+using TextGame.game.map.section_types;
 
-namespace TextGame
-{
-    public class Map
-    {
-        // A map will be created which is comprised of many objects implementing MapSection.
+namespace TextGame.game.map {
+    public class Map {
+        // A map will be created which is comprised of many objects implementing IMapSection.
         // A map is essentially a 10x10 matrix of objects.
 
-        public readonly MapSection[,] Layout;
+        public readonly IMapSection[,] Matrix;
 
         // When a new Map is instantiated, It will create 6 generator objects, 1 hatch object, 13 tree objects, and 80 grassland objects
-        public Map()
-        {
-            this.Layout = new MapSection[10, 10];
+        public Map() {
+            this.Matrix = new IMapSection[10, 10];
             Random r = new Random();
 
             // Create hatch
-            this.Layout[r.Next(10), r.Next(10)] = new Hatch();
-            
+            this.Matrix[r.Next(10), r.Next(10)] = new Hatch();
+
             // Create generators
-            for (int i = 0; i < 6; i++)
-            {
+            for (int i = 0; i < 6; i++) {
                 int x = r.Next(10);
                 int y = r.Next(10);
-                if (this.Layout[x, y] is MapSection)
-                {
+                if (this.Matrix[x, y] is IMapSection) {
                     i--;
                 }
-                else
-                {
-                    this.Layout[x, y] = new Generator();
+                else {
+                    this.Matrix[x, y] = new Generator();
                 }
             }
-            
+
             // Create trees
-            for (int i = 0; i < 13; i++)
-            {
+            for (int i = 0; i < 13; i++) {
                 int x = r.Next(10);
                 int y = r.Next(10);
-                if (this.Layout[x, y] is MapSection)
-                {
+                if (this.Matrix[x, y] is IMapSection) {
                     i--;
                 }
-                else
-                {
-                    this.Layout[x, y] = new Tree();
+                else {
+                    this.Matrix[x, y] = new Tree();
                 }
             }
 
             // Add 80 Grassland objects
-            for (int i = 0; i < 10; i++)
-            {
-                for (int j = 0; j < 10; j++)
-                {
-                    if (this.Layout[i, j] == null) { this.Layout[i, j] = new Grassland(); }
+            for (int i = 0; i < 10; i++) {
+                for (int j = 0; j < 10; j++) {
+                    if (this.Matrix[i, j] == null) {
+                        this.Matrix[i, j] = new Grassland();
+                    }
                 }
             }
         }
