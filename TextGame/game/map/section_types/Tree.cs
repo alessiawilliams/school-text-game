@@ -14,11 +14,11 @@ namespace TextGame.section_types
             Random r = new Random();
             if (r.Next(2) == 1)
             {
-                this.Item = new Item("flashlight");
+                this.Item = new Item("Flashlight");
             }
             else
             {
-                this.Item = new Item("map");
+                this.Item = new Item("Map");
             }
         }
         

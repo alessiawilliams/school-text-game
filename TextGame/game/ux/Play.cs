@@ -10,11 +10,9 @@ namespace TextGame.game.ux
             Console.WriteLine("You are stranded in the dark park. You have nothing in your bag.");
             LookAround(g.Player.Location, g.Map.Layout);
             CurrentOptions(g.Player.Location, g.Map.Layout);
-            // TODO implement options for each type of section
-            // TODO implement movement
-            //ShowMap(g.Player.Location, g.Map.Layout);
+            // TODO: implement options for each type of section
             string input = AcceptInput();
-            ParseInput(input);
+            ParseInput(input.ToLower(), g);
         }
 
         private static void ShowMap(int[] l, MapSection[,] m)
@@ -52,7 +50,7 @@ namespace TextGame.game.ux
         {
             //TODO: make this cleanly not prone to IndexOutOfRangeException
             int pX = l[0];
-            int pY = l[0];
+            int pY = l[1];
             if (!(m[pX, pY + 1] is Grassland))
             {
                 Console.WriteLine($"North of you, you see a {m[pX, pY + 1].Name}");
@@ -86,9 +84,69 @@ namespace TextGame.game.ux
             return Console.ReadLine();
         }
 
-        private static void ParseInput(string input)
+        private static void ParseInput(string input, GameInstance g)
         {
-            
+            // Inventory management/items
+            if (input.Contains("inventory") || input.Contains("bag"))
+            {
+                g.Player.ViewInventory();
+            }
+            else if (input.Contains("map"))
+            {
+                ShowMap(g.Player.Location, g.Map.Layout);
+            }
+            else if (input.Contains("flashlight"))
+            {
+                // TODO: Implement flashlight mechanism
+            }
+
+            // Movement
+            if (input.Contains("north"))
+            {
+                g.Player.Move(0);
+                Console.WriteLine("You headed north.");
+            }
+            else if (input.Contains("south"))
+            {
+                g.Player.Move(1);
+                Console.WriteLine("You ventured south.");
+            }
+            else if (input.Contains("east"))
+            {
+                g.Player.Move(2);
+                Console.WriteLine("You moved east.");
+            }
+            else if (input.Contains("west"))
+            {
+                g.Player.Move(3);
+                Console.WriteLine("You went west.");
+            }
+
+            // World actions
+            if (input.Contains("generator") || input.Contains("fix"))
+            {
+                if (g.Map.Layout[g.Player.Location[0], g.Player.Location[1]] is Generator)
+                {
+                    g.Map.Layout[g.Player.Location[0], g.Player.Location[1]].Activate();
+                }
+                else
+                {
+                    Console.WriteLine("You aren't near a generator at the moment. Try to find one.");
+                }
+            }
+            if (input.Contains("drop"))
+            {
+                Console.WriteLine("Which item would you like to drop?");
+                string i = Console.ReadLine();
+                if (i == "0" || i == "1" || i == "2")
+                {
+                    g.Map.Layout[g.Player.Location[0], g.Player.Location[1]].Item = g.Player.Inventory[int(i)];
+                }
+                else
+                {
+                    Console.WriteLine("You chose not to drop anything.");
+                }
+            }
         }
     }
 }
