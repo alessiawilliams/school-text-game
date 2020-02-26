@@ -5,9 +5,8 @@ using TextGame.game.map.section_types;
 namespace TextGame.game.ux {
     public static class Play {
         public static void PlayGame(GameInstance game) {
-            //Console.WriteLine("You are stranded in the dark park. You have nothing in your bag.");
             LookAround(game.Player.Location, game.Map.Matrix);
-            Console.WriteLine($"{game.Player.Location[0]}, {game.Player.Location[1]}");
+            // Console.WriteLine($"{game.Player.Location[0]}, {game.Player.Location[1]}");
             CurrentOptions(game.Player.Location, game.Map.Matrix);
             // TODO: Implement options for each type of section - hatch: winning, opening - gens: unlucky
             string input = AcceptInput();
@@ -176,6 +175,17 @@ namespace TextGame.game.ux {
                 }
                 else {
                     Console.WriteLine("There's already an item on the ground here.");
+                }
+            }
+
+            if (input.Contains("hatch") || input.Contains("escape")) {
+                if (game.Map.Matrix[game.Player.Location[0], game.Player.Location[1]] is Hatch) {
+                    if (game.Map.ActiveGenerators == 4) {
+                        // TODO: Activate win sequence
+                    }
+                    else {
+                        Console.WriteLine("The hatch isn't powered and can't currently be opened.");
+                    }
                 }
             }
         }

@@ -4,6 +4,7 @@ obj/
 
 # IDE and User Settings
 **/.idea/**
+**/.vscode
 *.user
 
 # macOS
