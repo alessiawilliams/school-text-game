@@ -7,7 +7,6 @@ namespace TextGame.game.map {
         // A map is essentially a 10x10 matrix of objects.
 
         public readonly IMapSection[,] Matrix;
-        public int ActiveGenerators { get; set; }
 
         // When a new Map is instantiated, It will create 6 generator objects, 1 hatch object, 13 tree objects, and 80 grassland objects
         public Map() {
@@ -50,5 +49,7 @@ namespace TextGame.game.map {
                 }
             }
         }
+
+        public int ActiveGenerators { get; set; }
     }
 }

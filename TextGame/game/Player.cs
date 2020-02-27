@@ -12,35 +12,43 @@ namespace TextGame.game {
         public void Move(int dir) {
             if (dir == 0) // north
             {
-                this.Location[1] += 1;
+                this.Location[0] -= 1;
             }
             else if (dir == 1) // south
             {
-                this.Location[1] -= 1;
+                this.Location[0] += 1;
             }
             else if (dir == 2) // east
             {
-                this.Location[0] += 1;
+                this.Location[1] += 1;
             }
             else if (dir == 3) // west
             {
-                this.Location[0] -= 1;
+                this.Location[1] -= 1;
             }
         }
 
         public void ViewInventory() {
             Console.WriteLine("You check your bag.");
             for (int i = 0; i < 3; i++) {
-                Console.WriteLine($"{i}. {this.Inventory[i].Type}");
+                try {
+                    Console.WriteLine($"{i}. {this.Inventory[i].Type}");
+                }
+                catch { } // Suppresses/skips null items
             }
+
+            Console.ReadKey();
         }
 
         public int UseItem(string type) {
             if (type == "Map") {
                 foreach (Item i in this.Inventory) {
-                    if (i.Type == "Map") {
-                        return 1; // Can use map
+                    try {
+                        if (i.Type == "Map") {
+                            return 1; // Can use map
+                        }
                     }
+                    catch { }
                 }
 
                 return 0; // No map in inventory
@@ -48,9 +56,12 @@ namespace TextGame.game {
 
             if (type == "Flashlight") {
                 foreach (Item i in this.Inventory) {
-                    if (i.Type == "Flashlight") {
-                        return 3; // Can use flashlight
+                    try {
+                        if (i.Type == "Flashlight") {
+                            return 3; // Can use flashlight
+                        }
                     }
+                    catch { }
                 }
 
                 return 2; // No flashlight in inventory

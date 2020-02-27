@@ -1,11 +1,15 @@
 ﻿using System;
+using System.Threading;
 using TextGame.game.map;
 using TextGame.game.map.section_types;
+using TextGame.game.ux.util;
 
 namespace TextGame.game.ux {
     public static class Play {
         public static void PlayGame(GameInstance game) {
+            Console.Clear();
             LookAround(game.Player.Location, game.Map.Matrix);
+            ShowMap(game.Player.Location, game.Map.Matrix);
             // Console.WriteLine($"{game.Player.Location[0]}, {game.Player.Location[1]}");
             CurrentOptions(game.Player.Location, game.Map.Matrix);
             // TODO: Implement options for each type of section - hatch: winning, opening - gens: unlucky
@@ -39,43 +43,43 @@ namespace TextGame.game.ux {
         }
 
         private static void LookAround(int[] location, IMapSection[,] map) {
-            int pX = location[0];
-            int pY = location[1];
+            int pY = location[0];
+            int pX = location[1];
 
             try {
-                if (!(map[pX, pY + 1] is Grassland)) {
-                    Console.WriteLine($"North of you, you see a {map[pX, pY + 1].Name}");
+                if (!(map[pY - 1, pX] is Grassland)) {
+                    SlowPrint.Print($"North of you, you see a {map[pY - 1, pX].Name}");
                 }
             }
             catch {
-                Console.WriteLine("You cannot see further north...");
+                SlowPrint.Print("You cannot see further north...");
             }
 
             try {
-                if (!(map[pX, pY - 1] is Grassland)) {
-                    Console.WriteLine($"South of you, there is a {map[pX, pY - 1].Name}");
+                if (!(map[pY + 1, pX] is Grassland)) {
+                    SlowPrint.Print($"South of you, there is a {map[pY + 1, pX].Name}");
                 }
             }
             catch {
-                Console.WriteLine("You cannot see further south...");
+                SlowPrint.Print("You cannot see further south...");
             }
 
             try {
-                if (!(map[pX + 1, pY] is Grassland)) {
-                    Console.WriteLine($"East of you, there is a {map[pX + 1, pY].Name}");
+                if (!(map[pY, pX + 1] is Grassland)) {
+                    SlowPrint.Print($"East of you, there is a {map[pY, pX + 1].Name}");
                 }
             }
             catch {
-                Console.WriteLine("You cannot see further east...");
+                SlowPrint.Print("You cannot see further east...");
             }
 
             try {
-                if (!(map[pX - 1, pY] is Grassland)) {
-                    Console.WriteLine($"West of you, there is a {map[pX - 1, pY].Name}");
+                if (!(map[pY, pX - 1] is Grassland)) {
+                    SlowPrint.Print($"West of you, there is a {map[pY, pX - 1].Name}");
                 }
             }
             catch {
-                Console.WriteLine("You cannot see further west...");
+                SlowPrint.Print("You cannot see further west...");
             }
         }
 
@@ -99,7 +103,7 @@ namespace TextGame.game.ux {
             else if (input.Contains("map") || input.Contains("flashlight")) {
                 int useItem = game.Player.UseItem(input.Contains("map") ? "Map" : "Flashlight");
                 if (useItem % 2 == 0) {
-                    Console.WriteLine("You don't have the required item for that.");
+                    SlowPrint.Print("You don't have the required item for that.");
                 }
                 else {
                     if (useItem == 1) {
@@ -114,19 +118,19 @@ namespace TextGame.game.ux {
             // Movement
             if (input.Contains("north")) {
                 game.Player.Move(0);
-                Console.WriteLine("You headed north.");
+                SlowPrint.Print("You headed north.");
             }
             else if (input.Contains("south")) {
                 game.Player.Move(1);
-                Console.WriteLine("You ventured south.");
+                SlowPrint.Print("You ventured south.");
             }
             else if (input.Contains("east")) {
                 game.Player.Move(2);
-                Console.WriteLine("You moved east.");
+                SlowPrint.Print("You moved east.");
             }
             else if (input.Contains("west")) {
                 game.Player.Move(3);
-                Console.WriteLine("You went west.");
+                SlowPrint.Print("You went west.");
             }
 
             // World actions
@@ -136,9 +140,10 @@ namespace TextGame.game.ux {
                         it's the easiest method. For safety, this checks if the instance is Generator anyway!
                         Note to self in the future: C# 8.0 has default implementations in an interface. */
                     ((Generator) game.Map.Matrix[game.Player.Location[0], game.Player.Location[1]]).ActivateGenerator();
+                    game.Map.ActiveGenerators += 1;
                 }
                 else {
-                    Console.WriteLine("You aren't near a generator at the moment. Try to find one.");
+                    SlowPrint.Print("You aren't near a generator at the moment. Try to find one.");
                 }
             }
 
@@ -153,38 +158,41 @@ namespace TextGame.game.ux {
                         game.Player.ItemsHeld += 1;
                     }
                     else {
-                        Console.WriteLine("Your bag is already full.");
+                        SlowPrint.Print("Your bag is already full.");
                     }
                 }
                 else {
-                    Console.WriteLine("You can't find any items here. Try a tree.");
+                    SlowPrint.Print("You can't find any items here. Try a tree.");
                 }
             }
 
             if (input.Contains("drop")) {
                 if (game.Map.Matrix[game.Player.Location[0], game.Player.Location[1]].Item == null) {
-                    Console.WriteLine("Which item would you like to drop?");
+                    SlowPrint.Print("Which item would you like to drop?");
                     string i = Console.ReadLine();
                     if (i == "0" || i == "1" || i == "2") {
                         game.Map.Matrix[game.Player.Location[0], game.Player.Location[1]].Item =
                             game.Player.Inventory[int.Parse(i)];
                     }
                     else {
-                        Console.WriteLine("You chose not to drop anything.");
+                        SlowPrint.Print("You chose not to drop anything.");
                     }
                 }
                 else {
-                    Console.WriteLine("There's already an item on the ground here.");
+                    SlowPrint.Print("There's already an item on the ground here.");
                 }
             }
 
             if (input.Contains("hatch") || input.Contains("escape")) {
                 if (game.Map.Matrix[game.Player.Location[0], game.Player.Location[1]] is Hatch) {
                     if (game.Map.ActiveGenerators == 4) {
-                        // TODO: Activate win sequence
+                        SlowPrint.Print("You flick the switch, and the hatch slowly slides open...");
+                        Thread.Sleep(100);
+                        Console.Clear();
+                        Win.WinSequence();
                     }
                     else {
-                        Console.WriteLine("The hatch isn't powered and can't currently be opened.");
+                        SlowPrint.Print("The hatch isn't powered and can't currently be opened.");
                     }
                 }
             }

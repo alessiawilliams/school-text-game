@@ -1,4 +1,4 @@
-﻿using System;
+﻿using TextGame.game.ux.util;
 
 namespace TextGame.game.map.section_types {
     public class Generator : IMapSection {
@@ -9,20 +9,20 @@ namespace TextGame.game.map.section_types {
 
         public void Options() {
             if (this.Activated) {
-                Console.WriteLine("You are stood by an active generator.");
+                SlowPrint.Print("You are stood by an active generator.");
             }
             else {
-                Console.WriteLine("You are stood by a generator, which you can activate.");
+                SlowPrint.Print("You are stood by a generator, which you can activate.");
             }
         }
 
         public void ActivateGenerator() {
             if (this.Activated) {
-                Console.WriteLine("This generator is already running...");
+                SlowPrint.Print("This generator is already running...");
             }
             else {
                 this.Activated = true;
-                Console.WriteLine("You hear a soft hum, and lights blink on. The generator is now running.");
+                SlowPrint.Print("You hear a soft hum, and lights blink on. The generator is now running.");
             }
         }
     }

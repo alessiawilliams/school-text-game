@@ -48,6 +48,8 @@
     <Compile Include="game\map\section_types\Tree.cs" />
     <Compile Include="game\Player.cs" />
     <Compile Include="game\ux\Play.cs" />
+    <Compile Include="game\ux\util\SlowPrint.cs" />
+    <Compile Include="game\ux\Win.cs" />
     <Compile Include="Init.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

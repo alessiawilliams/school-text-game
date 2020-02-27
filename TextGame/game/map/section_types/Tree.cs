@@ -1,4 +1,5 @@
 ﻿using System;
+using TextGame.game.ux.util;
 
 namespace TextGame.game.map.section_types {
     public class Tree : IMapSection {
@@ -13,7 +14,7 @@ namespace TextGame.game.map.section_types {
         public string Name { get; set; } = "Tree";
 
         public void Options() {
-            Console.WriteLine("You are stood by a tree, which you can search.");
+            SlowPrint.Print("You are stood by a tree, which you can search.");
         }
 
         public void RemoveItemFromTree() {
