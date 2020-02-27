@@ -12,6 +12,7 @@ namespace TextGame.game.map {
         public Map() {
             this.Matrix = new IMapSection[10, 10];
             Random r = new Random();
+            int unluckyGenerators;
 
             // Create hatch
             this.Matrix[r.Next(10), r.Next(10)] = new Hatch();
@@ -25,6 +26,11 @@ namespace TextGame.game.map {
                 }
                 else {
                     this.Matrix[x, y] = new Generator();
+                    if (unluckyGenerators < 2) {
+                        if(r.Next(6) <= 2) {
+                            this.Matrix[x, y].Unlucky = true;
+                        }
+                    }
                 }
             }
 
@@ -45,6 +51,19 @@ namespace TextGame.game.map {
                 for (int j = 0; j < 10; j++) {
                     if (this.Matrix[i, j] == null) {
                         this.Matrix[i, j] = new Grassland();
+                    }
+                }
+            }
+
+            // Makes sure 2 unlucky generators were made. If not, up to the first 2 found are made unlucky.
+            // X ~ B(6, 1/3) : P(X <= 1) == 35.11% chance this has to run.
+            while (unluckyGenerators < 2) {
+                for (int i = 0; i < 10; i++) {
+                    for (int j = 0; j < 10; j++) {
+                        if (unluckyGenerators < 2 && this.Matrix[i, j] is Generator) {
+                            unluckyGenerators++;
+                            this.Matrix[i, j].Unlucky = true;
+                        }
                     }
                 }
             }

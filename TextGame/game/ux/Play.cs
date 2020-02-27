@@ -7,12 +7,10 @@ using TextGame.game.ux.util;
 namespace TextGame.game.ux {
     public static class Play {
         public static void PlayGame(GameInstance game) {
+            // TODO: Beautify output
             Console.Clear();
             LookAround(game.Player.Location, game.Map.Matrix);
-            ShowMap(game.Player.Location, game.Map.Matrix);
-            // Console.WriteLine($"{game.Player.Location[0]}, {game.Player.Location[1]}");
-            CurrentOptions(game.Player.Location, game.Map.Matrix);
-            // TODO: Implement options for each type of section - hatch: winning, opening - gens: unlucky
+            CurrentOptions(game.Player.Location, game.Map.Matrix, game.Map.ActiveGenerators);
             string input = AcceptInput();
             ParseInput(input.ToLower(), game);
             PlayGame(game);
@@ -83,9 +81,9 @@ namespace TextGame.game.ux {
             }
         }
 
-        private static void CurrentOptions(int[] location, IMapSection[,] map) {
+        private static void CurrentOptions(int[] location, IMapSection[,] map, int gensActive) {
             if (!(map[location[0], location[1]] is Grassland)) {
-                map[location[0], location[1]].Options();
+                map[location[0], location[1]].Options(gensActive);
             }
         }
 
@@ -118,19 +116,15 @@ namespace TextGame.game.ux {
             // Movement
             if (input.Contains("north")) {
                 game.Player.Move(0);
-                SlowPrint.Print("You headed north.");
             }
             else if (input.Contains("south")) {
                 game.Player.Move(1);
-                SlowPrint.Print("You ventured south.");
             }
             else if (input.Contains("east")) {
                 game.Player.Move(2);
-                SlowPrint.Print("You moved east.");
             }
             else if (input.Contains("west")) {
                 game.Player.Move(3);
-                SlowPrint.Print("You went west.");
             }
 
             // World actions
@@ -186,10 +180,7 @@ namespace TextGame.game.ux {
             if (input.Contains("hatch") || input.Contains("escape")) {
                 if (game.Map.Matrix[game.Player.Location[0], game.Player.Location[1]] is Hatch) {
                     if (game.Map.ActiveGenerators == 4) {
-                        SlowPrint.Print("You flick the switch, and the hatch slowly slides open...");
-                        Thread.Sleep(100);
-                        Console.Clear();
-                        Win.WinSequence();
+                        ((Hatch) game.Map.Matrix[game.Player.Location[0], game.Player.Location[1]]).UseHatch();
                     }
                     else {
                         SlowPrint.Print("The hatch isn't powered and can't currently be opened.");

@@ -1,9 +1,11 @@
-﻿using TextGame.game.ux.util;
+﻿using TextGame.game.ux;
+using TextGame.game.ux.util;
 
 namespace TextGame.game.map.section_types {
     public class Generator : IMapSection {
         public bool Activated { get; set; }
         public bool ContainsPlayer { get; set; }
+        public bool Unlucky { get; set; }
         public Item Item { get; set; }
         public string Name { get; set; } = "Generator";
 
@@ -20,9 +22,12 @@ namespace TextGame.game.map.section_types {
             if (this.Activated) {
                 SlowPrint.Print("This generator is already running...");
             }
-            else {
+            else if (!this.Unlucky) {
                 this.Activated = true;
                 SlowPrint.Print("You hear a soft hum, and lights blink on. The generator is now running.");
+            }
+            else {
+                Lose.LoseSequence();
             }
         }
     }
