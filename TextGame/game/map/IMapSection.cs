@@ -8,6 +8,6 @@
         bool ContainsPlayer { get; set; }
         string Name { get; set; }
 
-        void Options();
+        void Options(int gensActive);
     }
 }

@@ -47,6 +47,7 @@
     <Compile Include="game\map\section_types\Grassland.cs" />
     <Compile Include="game\map\section_types\Tree.cs" />
     <Compile Include="game\Player.cs" />
+    <Compile Include="game\ux\Lose.cs" />
     <Compile Include="game\ux\Play.cs" />
     <Compile Include="game\ux\util\SlowPrint.cs" />
     <Compile Include="game\ux\Win.cs" />

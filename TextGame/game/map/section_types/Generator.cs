@@ -4,12 +4,12 @@ using TextGame.game.ux.util;
 namespace TextGame.game.map.section_types {
     public class Generator : IMapSection {
         public bool Activated { get; set; }
-        public bool ContainsPlayer { get; set; }
         public bool Unlucky { get; set; }
+        public bool ContainsPlayer { get; set; }
         public Item Item { get; set; }
         public string Name { get; set; } = "Generator";
 
-        public void Options() {
+        public void Options(int gensActive) {
             if (this.Activated) {
                 SlowPrint.Print("You are stood by an active generator.");
             }

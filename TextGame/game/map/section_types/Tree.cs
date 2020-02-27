@@ -12,13 +12,15 @@ namespace TextGame.game.map.section_types {
         public bool ContainsPlayer { get; set; }
         public Item Item { get; set; }
         public string Name { get; set; } = "Tree";
+        public bool Searched { get; set; } = false;
 
-        public void Options() {
-            SlowPrint.Print("You are stood by a tree, which you can search.");
-        }
-
-        public void RemoveItemFromTree() {
-            this.Item = null;
+        public void Options(int gensActive) {
+            if (!this.Searched) {
+                SlowPrint.Print("You are stood by a tree, which you can search.");
+            }
+            else {
+                Console.WriteLine("You are stood by a tree, which you have searched before.");
+            }
         }
     }
 }

@@ -5,6 +5,6 @@
         public string Name { get; set; } = "Grassland";
 
         // Grassland has no options; this method stub only exists as Grassland implements MapSection.
-        public void Options() { }
+        public void Options(int gensActive) { }
     }
 }

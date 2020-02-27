@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 using TextGame.game.map;
 using TextGame.game.map.section_types;
 using TextGame.game.ux.util;
@@ -9,7 +8,7 @@ namespace TextGame.game.ux {
         public static void PlayGame(GameInstance game) {
             // TODO: Beautify output
             Console.Clear();
-            LookAround(game.Player.Location, game.Map.Matrix, game.Player.FlashActive);
+            LookAround(game.Player.Location, game.Map.Matrix, game.Player);
             CurrentOptions(game.Player.Location, game.Map.Matrix, game.Map.ActiveGenerators);
             string input = AcceptInput();
             ParseInput(input.ToLower(), game);
@@ -17,6 +16,7 @@ namespace TextGame.game.ux {
         }
 
         private static void ShowMap(int[] location, IMapSection[,] map) {
+            Console.Clear();
             for (int i = 0; i < 10; i++) {
                 for (int j = 0; j < 10; j++) {
                     if (location[0] == i && location[1] == j) {
@@ -38,9 +38,14 @@ namespace TextGame.game.ux {
 
                 Console.WriteLine();
             }
+
+            Console.WriteLine("\nX: PLAYER; h: hatch; t: tree; g: generator");
+            Console.WriteLine("\nPress RETURN to return to game.");
+            Console.ReadKey();
+            SlowPrint.Print("The map fell to pieces.");
         }
 
-        private static void LookAround(int[] location, IMapSection[,] map, bool flashActive) {
+        private static void LookAround(int[] location, IMapSection[,] map, Player player) {
             int pY = location[0];
             int pX = location[1];
 
@@ -48,8 +53,11 @@ namespace TextGame.game.ux {
                 if (!(map[pY - 1, pX] is Grassland)) {
                     SlowPrint.Print($"North of you, you see a {map[pY - 1, pX].Name}");
                 }
-                if (!(map[pY - 2, pX] is Grassland && flashActive)) {
-                    SlowPrint.Print($"Further north of you, you see a {map[pY - 1, pX].Name}");
+
+                if (player.FlashActive) {
+                    if (!(map[pY - 2, pX] is Grassland)) {
+                        SlowPrint.Print($"Far north of you, you see a {map[pY - 2, pX].Name}");
+                    }
                 }
             }
             catch {
@@ -60,8 +68,11 @@ namespace TextGame.game.ux {
                 if (!(map[pY + 1, pX] is Grassland)) {
                     SlowPrint.Print($"South of you, there is a {map[pY + 1, pX].Name}");
                 }
-                if (!(map[pY + 2, pX] is Grassland && flashActive)) {
-                    SlowPrint.Print($"Further south of you, there is a {map[pY + 1, pX].Name}");
+
+                if (player.FlashActive) {
+                    if (!(map[pY + 2, pX] is Grassland)) {
+                        SlowPrint.Print($"Far south of you, you see a {map[pY + 2, pX].Name}");
+                    }
                 }
             }
             catch {
@@ -72,8 +83,11 @@ namespace TextGame.game.ux {
                 if (!(map[pY, pX + 1] is Grassland)) {
                     SlowPrint.Print($"East of you, there is a {map[pY, pX + 1].Name}");
                 }
-                if (!(map[pY, pX + 2] is Grassland && flashActive)) {
-                    SlowPrint.Print($"Further east of you, there is a {map[pY, pX + 1].Name}");
+
+                if (player.FlashActive) {
+                    if (!(map[pY, pX + 2] is Grassland)) {
+                        SlowPrint.Print($"Far east of you, you see a {map[pY, pX + 2].Name}");
+                    }
                 }
             }
             catch {
@@ -84,13 +98,18 @@ namespace TextGame.game.ux {
                 if (!(map[pY, pX - 1] is Grassland)) {
                     SlowPrint.Print($"West of you, there is a {map[pY, pX - 1].Name}");
                 }
-                if (!(map[pY, pX - 2] is Grassland) && flashActive) {
-                    SlowPrint.Print($"Further west of you, there is a {map[pY, pX - 1].Name}");
+
+                if (player.FlashActive) {
+                    if (!(map[pY, pX - 2] is Grassland)) {
+                        SlowPrint.Print($"Far west of you, you see a {map[pY, pX - 2].Name}");
+                    }
                 }
             }
             catch {
                 SlowPrint.Print("You cannot see further west...");
             }
+
+            player.FlashActive = false;
         }
 
         private static void CurrentOptions(int[] location, IMapSection[,] map, int gensActive) {
@@ -154,11 +173,21 @@ namespace TextGame.game.ux {
             }
 
             if (input.Contains("tree") || input.Contains("search") || input.Contains("item")) {
+                IMapSection tile = game.Map.Matrix[game.Player.Location[0], game.Player.Location[1]];
+                
                 if (game.Map.Matrix[game.Player.Location[0], game.Player.Location[1]].Item != null) {
                     if (game.Player.ItemsHeld < 3) {
-                        for (int i = 0; i < 2; i++) {
-                            game.Player.Inventory[i] =
-                                game.Map.Matrix[game.Player.Location[0], game.Player.Location[1]].Item;
+                        for (int i = 0; i < 3; i++) {
+                            if (game.Player.Inventory[i] == null) {
+                                game.Player.Inventory[i] = tile.Item;
+                                SlowPrint.Print($"You found a {tile.Item.Type} in the {tile.Name}!");
+                                game.Map.Matrix[game.Player.Location[0], game.Player.Location[1]].Item = null;
+                                break;
+                            }
+
+                            if (tile is Tree) {
+                                ((Tree)game.Map.Matrix[game.Player.Location[0], game.Player.Location[1]]).Searched = true;
+                            }
                         }
 
                         game.Player.ItemsHeld += 1;
@@ -177,8 +206,9 @@ namespace TextGame.game.ux {
                     SlowPrint.Print("Which item would you like to drop?");
                     string i = Console.ReadLine();
                     if (i == "0" || i == "1" || i == "2") {
-                        game.Map.Matrix[game.Player.Location[0], game.Player.Location[1]].Item =
-                            game.Player.Inventory[int.Parse(i)];
+                        game.Map.Matrix[game.Player.Location[0], game.Player.Location[1]].Item = game.Player.Inventory[int.Parse(i)];
+                        game.Player.Inventory[int.Parse(i)] = null;
+                        game.Player.ItemsHeld -= 1;
                     }
                     else {
                         SlowPrint.Print("You chose not to drop anything.");

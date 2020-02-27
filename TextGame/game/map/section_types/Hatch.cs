@@ -1,4 +1,6 @@
-﻿using TextGame.game.ux;
+﻿using System;
+using System.Threading;
+using TextGame.game.ux;
 using TextGame.game.ux.util;
 
 namespace TextGame.game.map.section_types {
@@ -16,7 +18,7 @@ namespace TextGame.game.map.section_types {
             }
         }
 
-        public void UseHatch() { 
+        public void UseHatch() {
             SlowPrint.Print("You flick the switch, and the hatch slowly slides open...");
             Thread.Sleep(100);
             Console.Clear();

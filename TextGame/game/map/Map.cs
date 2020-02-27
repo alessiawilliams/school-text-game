@@ -12,7 +12,7 @@ namespace TextGame.game.map {
         public Map() {
             this.Matrix = new IMapSection[10, 10];
             Random r = new Random();
-            int unluckyGenerators;
+            int unluckyGenerators = 0;
 
             // Create hatch
             this.Matrix[r.Next(10), r.Next(10)] = new Hatch();
@@ -27,8 +27,8 @@ namespace TextGame.game.map {
                 else {
                     this.Matrix[x, y] = new Generator();
                     if (unluckyGenerators < 2) {
-                        if(r.Next(6) <= 2) {
-                            this.Matrix[x, y].Unlucky = true;
+                        if (r.Next(6) <= 2) {
+                            ((Generator) this.Matrix[x, y]).Unlucky = true;
                         }
                     }
                 }
@@ -62,7 +62,7 @@ namespace TextGame.game.map {
                     for (int j = 0; j < 10; j++) {
                         if (unluckyGenerators < 2 && this.Matrix[i, j] is Generator) {
                             unluckyGenerators++;
-                            this.Matrix[i, j].Unlucky = true;
+                            ((Generator) this.Matrix[i, j]).Unlucky = true;
                         }
                     }
                 }
