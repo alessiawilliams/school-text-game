@@ -9,6 +9,8 @@ namespace TextGame.game {
         public int[] Location = new int[2] {0, 0};
         public int ItemsHeld { get; set; }
 
+        public bool FlashActive = false;
+
         public void Move(int dir) {
             try {
                 if (dir == 0) // north
@@ -54,10 +56,11 @@ namespace TextGame.game {
         public int UseItem(string type) {
             // TODO: Fix crashes
             if (type == "Map") {
-                foreach (Item i in this.Inventory) {
+                for(int i = 0; i < 2; i++) {
                     try {
-                        if (i.Type == "Map") {
-                            return 1; // Can use map
+                        if (this.Inventory[i].Type == "Map") {
+                            this.Inventory[i] = null;
+                            return 1;
                         }
                     }
                     catch { }
@@ -67,10 +70,11 @@ namespace TextGame.game {
             }
 
             if (type == "Flashlight") {
-                foreach (Item i in this.Inventory) {
+                for(int i = 0; i < 2; i++) {
                     try {
-                        if (i.Type == "Flashlight") {
-                            return 3; // Can use flashlight
+                        if (this.Inventory[i].Type == "Flashlight") {
+                            this.Inventory[i] = null;
+                            return 1;
                         }
                     }
                     catch { }

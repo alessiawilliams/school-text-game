@@ -9,7 +9,7 @@ namespace TextGame.game.ux {
         public static void PlayGame(GameInstance game) {
             // TODO: Beautify output
             Console.Clear();
-            LookAround(game.Player.Location, game.Map.Matrix);
+            LookAround(game.Player.Location, game.Map.Matrix, game.Player.FlashActive);
             CurrentOptions(game.Player.Location, game.Map.Matrix, game.Map.ActiveGenerators);
             string input = AcceptInput();
             ParseInput(input.ToLower(), game);
@@ -40,13 +40,16 @@ namespace TextGame.game.ux {
             }
         }
 
-        private static void LookAround(int[] location, IMapSection[,] map) {
+        private static void LookAround(int[] location, IMapSection[,] map, bool flashActive) {
             int pY = location[0];
             int pX = location[1];
 
             try {
                 if (!(map[pY - 1, pX] is Grassland)) {
                     SlowPrint.Print($"North of you, you see a {map[pY - 1, pX].Name}");
+                }
+                if (!(map[pY - 2, pX] is Grassland && flashActive)) {
+                    SlowPrint.Print($"Further north of you, you see a {map[pY - 1, pX].Name}");
                 }
             }
             catch {
@@ -57,6 +60,9 @@ namespace TextGame.game.ux {
                 if (!(map[pY + 1, pX] is Grassland)) {
                     SlowPrint.Print($"South of you, there is a {map[pY + 1, pX].Name}");
                 }
+                if (!(map[pY + 2, pX] is Grassland && flashActive)) {
+                    SlowPrint.Print($"Further south of you, there is a {map[pY + 1, pX].Name}");
+                }
             }
             catch {
                 SlowPrint.Print("You cannot see further south...");
@@ -66,6 +72,9 @@ namespace TextGame.game.ux {
                 if (!(map[pY, pX + 1] is Grassland)) {
                     SlowPrint.Print($"East of you, there is a {map[pY, pX + 1].Name}");
                 }
+                if (!(map[pY, pX + 2] is Grassland && flashActive)) {
+                    SlowPrint.Print($"Further east of you, there is a {map[pY, pX + 1].Name}");
+                }
             }
             catch {
                 SlowPrint.Print("You cannot see further east...");
@@ -74,6 +83,9 @@ namespace TextGame.game.ux {
             try {
                 if (!(map[pY, pX - 1] is Grassland)) {
                     SlowPrint.Print($"West of you, there is a {map[pY, pX - 1].Name}");
+                }
+                if (!(map[pY, pX - 2] is Grassland) && flashActive) {
+                    SlowPrint.Print($"Further west of you, there is a {map[pY, pX - 1].Name}");
                 }
             }
             catch {
@@ -108,7 +120,7 @@ namespace TextGame.game.ux {
                         ShowMap(game.Player.Location, game.Map.Matrix);
                     }
                     else if (useItem == 3) {
-                        // TODO: Create flashlight mechanics.
+                        game.Player.FlashActive = true;
                     }
                 }
             }
